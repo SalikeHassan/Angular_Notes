@@ -1,5 +1,102 @@
 # Angular Application Bundling: Architecting for Performance
 
+## Ahead-of-Time (AOT) Compilation
+
+AOT Compilation is a process that compiles Angular templates during build time, rather than at runtime. With AOT, the compiler converts Angular HTML templates and TypeScript code into JavaScript code before the browser loads. This provides several performance benefits:
+
+### Benefits of AOT Compilation
+
+- **Faster Rendering**: Since the compilation is done before the app is delivered, the browser doesn’t have to wait for the Angular compiler at runtime.
+- **Smaller Application Size**: AOT compilation removes unnecessary parts of Angular code, reducing the overall bundle size.
+- **Early Detection of Errors**: Errors in templates are caught at build time, improving code reliability.
+
+### Example: Enabling AOT Compilation
+
+In Angular CLI, AOT compilation is enabled by default for production builds. You can enable it manually using the `--aot` flag:
+
+```bash
+ng build --aot
+```
+### Alternatively, set it in angular.json under the production configuration:
+
+```json
+"configurations": {
+  "production": {
+    "aot": true
+  }
+}
+```
+
+## Server-Side Rendering (SSR) with Angular Universal
+
+Server-Side Rendering (SSR) is a technique where Angular pre-renders the HTML of each page on the server before sending it to the client. This approach provides significant performance and SEO benefits:
+
+### Benefits of SSR
+
+- **Improved SEO**: Since search engines receive fully rendered HTML, SSR helps improve indexing for Angular applications.
+- **Faster Initial Load**: The server provides fully rendered pages, so users can see content faster, especially over slower connections.
+- **Better Performance for Low-powered Devices**: SSR offloads the initial rendering work to the server, making it easier for low-powered devices to load the app.
+
+### Setting Up SSR with Angular Universal
+
+To set up SSR in your Angular application, follow these steps:
+
+### Step 1: Add Angular Universal to Your Project
+
+```bash
+ng add @nguniversal/express-engine
+```
+### Build and Serve the SSR Application
+```bash
+npm run build:ssr
+```
+```bash
+npm run serve:ssr
+```
+#### The app will now serve rendered HTML content, improving the initial page load speed and supporting SEO.
+
+## Pre-rendering with Angular Static Builds
+
+Pre-rendering is a technique where Angular generates static HTML for specific routes during the build process. Unlike SSR, which renders pages on each request, pre-rendering creates static files that are served directly, resulting in extremely fast load times.
+
+### Benefits of Pre-rendering
+
+- **High Performance**: Since pre-rendered pages are served as static files, they load almost instantly.
+- **SEO-friendly**: Just like SSR, search engines can index the static HTML.
+- **Cost-effective and Scalable**: No server-side rendering is required, allowing pre-rendered sites to be hosted on CDNs, making them highly scalable and cost-efficient.
+
+### Setting Up Pre-rendering with Angular
+
+### Add Angular Universal to Your Project
+
+To enable pre-rendering, you first need to set up Angular Universal:
+
+```bash
+ng add @nguniversal/express-engine
+```
+### Configure Routes to Pre-render: Edit angular.json to specify routes to pre-render
+```json
+"architect": {
+  "prerender": {
+    "builder": "@nguniversal/builders:prerender",
+    "options": {
+      "routes": [
+        "/",
+        "/about",
+        "/contact"
+      ]
+    }
+  }
+}
+```
+
+### Run Pre-rendering
+```bash
+npm run prerender
+```
+
+## Build for Performance
+
 When deploying an Angular application to production, efficient bundling is crucial to ensure optimized performance and faster load times. Angular traditionally used **Webpack** as its primary build tool, but with the release of **Angular 18**, a new Vite-based builder using **esbuild** has been introduced.
 
 ## What is Bundling?
@@ -94,4 +191,21 @@ ng serve
 | **Server-Side Rendering (SSR)**| Built-in SSR support for improved SEO and performance.                            |
 | **Lower Resource Usage**       | Reduces CPU/memory consumption, saving cloud costs.                               |
 | **Optimized for Large Projects**| Significant performance gains in enterprise-scale applications.                   |
+
+# Summary of Approaches to Optimize Angular Applications
+
+| Approach                         | Benefit                                                                                 |
+|----------------------------------|-----------------------------------------------------------------------------------------|
+| **AOT Compilation**              | Reduces bundle size, speeds up initial load, and catches errors early.                   |
+| **Server-Side Rendering (SSR)**  | Improves SEO, speeds up initial load, and enhances performance on low-powered devices.   |
+| **Pre-rendering**                | Serves static HTML for fast loading and scalability, especially for non-dynamic content. |
+| **Lazy Loading Modules**         | Loads only necessary code, reducing initial load size.                                   |
+| **Tree Shaking**                 | Removes unused code, optimizing bundle size.                                             |
+| **Code Splitting**               | Breaks app into smaller chunks, improving load times.                                    |
+| **Minification and Compression** | Reduces file sizes, speeding up download times.                                          |
+| **Smaller Polyfills**            | Avoids unnecessary code for unsupported browser features.                                |
+| **HTTP/2 and CDN**               | Speeds up asset delivery through multiplexing and caching on edge servers.               |
+| **Web Workers**                  | Offloads heavy computations, improving app responsiveness.                               |
+| **Vite**                         | Uses esbuild for faster bundling and modern ES module support, enhancing performance.    |
+
 
